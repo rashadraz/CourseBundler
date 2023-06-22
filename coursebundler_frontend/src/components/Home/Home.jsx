@@ -15,7 +15,7 @@ import vg from '../../assets/images/bg.png';
 import { CgGoogle, CgYoutube } from 'react-icons/cg';
 import { SiCoursera, SiUdemy } from 'react-icons/si';
 import { DiAws } from 'react-icons/di';
-import introVideo from '../../assets/videos/intro.mp4'
+import introVideo from '../../assets/videos/intro.mp4';
 
 function Home() {
   return (
@@ -28,9 +28,14 @@ function Home() {
           alignItems={'center'}
           spacing={['16', '56']}
         >
-          <VStack width={'full'} alignItems={['center', 'flex-end']}>
+          <VStack width={'full'} alignItems={['center', 'flex-end']} spacing={8}>
             <Heading children="Learn From The Experts" size={'2xl'} />
-            <Text children="Find Valuable Content At Reasonable Price" />
+            <Text
+              fontSize={'2xl'}
+              fontFamily={'cursive'}
+              textAlign={['center', 'left']}
+              children="Find Valuable Content At Reasonable Price"
+            />
             <Link to="/courses">
               <Button size={'lg'} colorScheme="yellow">
                 Explore Now
@@ -38,18 +43,28 @@ function Home() {
             </Link>
           </VStack>
 
-          <Image className='vector-graphics' boxSize={'md'} src={vg} objectFit={'contain'} />
+          <Image
+            className="vector-graphics"
+            boxSize={'md'}
+            src={vg}
+            objectFit={'contain'}
+          />
         </Stack>
       </div>
 
-      <Box padding={"8"} bg="blackAlpha.800">
+      <Box padding={'8'} bg="blackAlpha.800">
         <Heading
           children="OUR BRANDS"
-          size={'2xl'}
+          size={['1xl', '2xl']}
           textAlign={'center'}
           color={'yellow.400'}
         />
-        <HStack className='brandsBanner' justifyContent={"space-evenly"} marginTop={4}>
+        <HStack
+          className="brandsBanner"
+          justifyContent={'space-evenly'}
+          marginTop={4}
+          
+        >
           <CgGoogle />,
           <CgYoutube />
           <SiCoursera />,
@@ -58,19 +73,16 @@ function Home() {
         </HStack>
       </Box>
 
-    <div className="container2">
+      <div className="container2">
         <video
-        // autoPlay={true}
-        controls
-        controlsList='nodownload nofullscreen noremoteplayback'
-        disablePictureInPicture
-        disableRemotePlayback
-        src={introVideo}
-        >
-
-        </video>
-    </div>
-
+          // autoPlay={true}
+          controls
+          controlsList="nodownload nofullscreen noremoteplayback"
+          disablePictureInPicture
+          disableRemotePlayback
+          src={introVideo}
+        ></video>
+      </div>
     </section>
   );
 }
