@@ -60,7 +60,7 @@ function Home() {
 
     <div className="container2">
         <video
-        autoPlay={true}
+        // autoPlay={true}
         controls
         controlsList='nodownload nofullscreen noremoteplayback'
         disablePictureInPicture
