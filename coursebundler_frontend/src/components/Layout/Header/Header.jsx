@@ -17,7 +17,7 @@ import { Link } from 'react-router-dom';
 function Header() {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
-  const isAuthenticated = true;
+  const isAuthenticated = false;
   const user = {
     role: 'admin',
   };
