@@ -22,14 +22,17 @@ function Header() {
     role: 'admin',
   };
 
-  const LinkButton = ({ url = '/', title = 'Home' }) => (
+  const LinkButton = ({ url = '/', title = 'Home', onClose }) => (
     <Link to={url}>
-      <Button variant={'ghost'}>{title}</Button>
+      <Button variant={'ghost'} onClick={onClose}>
+        {title}
+      </Button>
     </Link>
   );
 
   const logoutHandler = () => {
     console.log('Logout');
+    onClose();
   };
 
   return (
@@ -55,11 +58,19 @@ function Header() {
 
           <DrawerBody>
             <VStack spacing={4} alignItems={'flex-start'}>
-              <LinkButton url="/" title="Home" />
-              <LinkButton url="/courses" title="Browse All Courses" />
-              <LinkButton url="/request" title="Request All Courses" />
-              <LinkButton url="/contact" title="Contact Us" />
-              <LinkButton url="/about" title="About " />
+              <LinkButton url="/" title="Home" onClose={onClose} />
+              <LinkButton
+                url="/courses"
+                title="Browse All Courses"
+                onClose={onClose}
+              />
+              <LinkButton
+                url="/request"
+                title="Request All Courses"
+                onClose={onClose}
+              />
+              <LinkButton url="/contact" title="Contact Us" onClose={onClose} />
+              <LinkButton url="/about" title="About " onClose={onClose} />
 
               <HStack
                 justifyContent={'space-evenly'}
@@ -71,12 +82,12 @@ function Header() {
                   <>
                     <VStack>
                       <HStack>
-                        <Link to="/profile">
+                        <Link to="/profile" onClick={onClose}>
                           <Button variant={'ghost'} colorScheme="yellow">
                             Profile
                           </Button>
                         </Link>
-                        <Link to="/profile">
+                        <Link to="/logout">
                           <Button variant={'ghost'} onClick={logoutHandler}>
                             <RiLogoutBoxFill style={{ margin: '4px' }} />
                             Logout
@@ -85,7 +96,7 @@ function Header() {
                       </HStack>
 
                       {user && user.role === 'admin' && (
-                        <Link to="/admin/dashboard">
+                        <Link to="/admin/dashboard" onClick={onClose}>
                           <Button colorScheme="purple" variant={'ghost'}>
                             <RiDashboardFill style={{ margin: '4px' }} />
                             Dashboard
@@ -96,11 +107,11 @@ function Header() {
                   </>
                 ) : (
                   <>
-                    <Link to="/login">
+                    <Link to="/login" onClick={onClose}>
                       <Button colorScheme="yellow">Login</Button>
                     </Link>
                     <p>OR</p>
-                    <Link to="/register">
+                    <Link to="/register" onClick={onClose}>
                       <Button colorScheme="yellow">Signup</Button>
                     </Link>
                   </>
