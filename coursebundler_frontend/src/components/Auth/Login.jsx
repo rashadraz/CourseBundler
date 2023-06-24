@@ -57,10 +57,10 @@ const Login = () => {
           <Box my={'4'}>
             New User?{' '}
             <Link to="/register">
-              <Button colorScheme="blue" variant={'link'} >
-                Signup {' '}
-              </Button>
-              {' '}Here
+              <Button colorScheme="blue" variant={'link'}>
+                Signup{' '}
+              </Button>{' '}
+              Here
             </Link>
           </Box>
         </form>
