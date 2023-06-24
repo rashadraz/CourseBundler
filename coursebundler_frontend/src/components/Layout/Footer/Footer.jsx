@@ -20,13 +20,13 @@ const Footer = () => {
           />
         </VStack>
         <HStack spacing={['2', '10']} justifyContent={'center'} color={'white'} fontSize={50}>
-          <a href="/youtube" target="_blank">
+          <a href="/youtube" target="blank">
             <TiSocialYoutubeCircular />
           </a>
-          <a href="/instagram" target="_blank">
+          <a href="/instagram" target="blank">
             <TiSocialInstagramCircular />
           </a>
-          <a href="/github" target="_blank">
+          <a href="/github" target="blank">
             <DiGithub />
           </a>
         </HStack>
