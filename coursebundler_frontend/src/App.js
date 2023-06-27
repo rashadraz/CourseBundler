@@ -15,14 +15,19 @@ import Subscribe from './components/Payments/Subscribe';
 import NotFound from './components/Layout/NotFound/NotFound';
 import PaymentSuccess from './components/Payments/PaymentSuccess';
 import PaymentFailed from './components/Payments/PaymentFailed';
+import CoursePage from './components/CoursePage/CoursePage';
 
 function App() {
+  window.addEventListener('contextmenu', (e)=>{
+    e.preventDefault();
+  })
   return (
     <Router>
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/courses" element={<Courses />} />
+        <Route path="/courses/:id" element={<CoursePage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgetpassword" element={<ForgetPassword />} />
