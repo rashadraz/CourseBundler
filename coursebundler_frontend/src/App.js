@@ -33,7 +33,7 @@ function App() {
         <Route path="/subscribe" element={<Subscribe />} />
         <Route path="*" element={<NotFound />} />
         <Route path="/paymentsuccess" element={<PaymentSuccess />} />
-        <Route path="/paymentfail" element={<PaymentFailed />} />
+        <Route path="/paymentfailed" element={<PaymentFailed />} />
       </Routes>
       <Footer />
     </Router>

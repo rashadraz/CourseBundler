@@ -1,4 +1,11 @@
-import { Box, Button, Container, Heading, Text, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Container,
+  Heading,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
 
 function Subscribe() {
   return (
@@ -17,11 +24,26 @@ function Subscribe() {
           <VStack textAlign={'center'} px={8} mt={4} spacing={8}>
             <Text
               children={`Join Pro Pack and Get Access to all Content`}
-              color={'black'}
+             
             />
-            <Heading size={'md'} children={"$299 Only"}/>
+            <Heading size={'md'} children={'$299 Only'} />
           </VStack>
-          <Button my={'8'} w={'full'} colorScheme='yellow'>Buy Now</Button>
+          <Button my={'8'} w={'full'} colorScheme="yellow">
+            Buy Now
+          </Button>
+        </Box>
+        <Box
+          bg={'blackAlpha.600'}
+          p={'4'}
+          css={{ borderRadius: '0 0 8px 8px' }}
+        >
+          <Heading
+            size={'sm'}
+            color={'white'}
+            textTransform={'uppercase'}
+            children={'100& refund at cancellation'}
+          />
+          <Text fontSize={'xs'} color={'white'} children={"*terms and conditions apply"}/>
         </Box>
       </VStack>
     </Container>
