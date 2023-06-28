@@ -17,7 +17,7 @@ import { Link } from 'react-router-dom';
 function Header() {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
-  const isAuthenticated = false;
+  const isAuthenticated = true;
   const user = {
     role: 'admin',
   };
@@ -48,6 +48,7 @@ function Header() {
         position={'fixed'}
         top={6}
         left={6}
+        zIndex={'overlay'}
       >
         <RiMenu5Fill />
       </Button>

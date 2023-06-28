@@ -16,6 +16,7 @@ import NotFound from './components/Layout/NotFound/NotFound';
 import PaymentSuccess from './components/Payments/PaymentSuccess';
 import PaymentFailed from './components/Payments/PaymentFailed';
 import CoursePage from './components/CoursePage/CoursePage';
+import Profile from './components/Profile/Profile';
 
 function App() {
   window.addEventListener('contextmenu', (e)=>{
@@ -34,6 +35,7 @@ function App() {
         <Route path="/resetpassword/:token" element={<ResetPassword />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/request" element={<Request />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/about" element={<About />} />
         <Route path="/subscribe" element={<Subscribe />} />
         <Route path="*" element={<NotFound />} />
