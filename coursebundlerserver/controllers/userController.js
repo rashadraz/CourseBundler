@@ -4,6 +4,7 @@ import { User } from "../models/User.js";
 import { sendToken } from "../utils/sendToken.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import crypto from "crypto";
+import { Course } from "../models/Course.js";
 
 export const register = catchAsyncError(async (req, res, next) => {
 	const { name, email, password } = req.body;
@@ -114,53 +115,92 @@ export const updateprofilepicture = catchAsyncError(async (req, res, next) => {
 	});
 });
 
-
 export const forgetPassword = catchAsyncError(async (req, res, next) => {
 	const { email } = req.body;
 	const user = await User.findOne({ email });
-	if (!user) return next(new ErrorHandler("User not Found", 400))
+	if (!user) return next(new ErrorHandler("User not Found", 400));
 
-	const resetToken = await user.getResetToken()
+	const resetToken = await user.getResetToken();
 
-	await user.save()
+	await user.save();
 
-	const url = `${process.env.FRONTEND_URL}/resetpassword/${resetToken}`
+	const url = `${process.env.FRONTEND_URL}/resetpassword/${resetToken}`;
 
-	const message = `Click on the link to reset your password, ${url}. If you have not requested then please ignore`
+	const message = `Click on the link to reset your password, ${url}. If you have not requested then please ignore`;
 
 	//send token via email
-	await sendEmail(user.email, "CourseBundler Reset Password", message)
+	await sendEmail(user.email, "CourseBundler Reset Password", message);
 	res.status(200).json({
 		success: true,
 		message: `Reset Token Has been sent to ${user?.email} `,
 	});
 });
 
-
 export const resetPassword = catchAsyncError(async (req, res, next) => {
+	const { token } = req.params;
 
-	const { token } = req.params
+	const { password } = req.body;
 
-	const { password } = req.body
-
-	const resetPasswordToken = crypto.createHash("sha256").update(token).digest("hex")
+	const resetPasswordToken = crypto
+		.createHash("sha256")
+		.update(token)
+		.digest("hex");
 
 	const user = await User.findOne({
 		resetPasswordToken,
 		resetPasswordExpire: {
 			$gt: Date.now(),
-		}
-	})
-	if (!user) return next(new ErrorHandler("Token is invalid or has been expired"))
+		},
+	});
+	if (!user)
+		return next(new ErrorHandler("Token is invalid or has been expired"));
 
 	user.password = password;
-	user.resetPasswordExpire=undefined;
-	user.resetPasswordToken=undefined;
+	user.resetPasswordExpire = undefined;
+	user.resetPasswordToken = undefined;
 
-	await user.save()
+	await user.save();
 
 	res.status(200).json({
 		success: true,
 		message: "Password Changed successfully",
+	});
+});
+
+export const addToPlaylist = catchAsyncError(async (req, res, next) => {
+	const user = await User.findById(req.user._id);
+	const course = await Course.findById(req.body.id);
+	if (!course) return next(new ErrorHandler("Invalid Course Id", 404));
+
+	const itemExists = user.playlist.find((item) => {
+		if (item.course.toString() === course._id.toString()) return true;
+	});
+
+	if (itemExists) return next(new ErrorHandler("Item already exists", 409));
+	user.playlist.push({
+		course: course._id,
+		poster: course.poster.url,
+	});
+	await user.save();
+	res.status(200).json({
+		success: true,
+		message: "Added to Playlist",
+	});
+});
+
+export const removeFromPlaylist = catchAsyncError(async (req, res, next) => {
+	const user = await User.findById(req.user._id);
+	const course = await Course.findById(req.query.id);
+	if (!course) return next(new ErrorHandler("Invalid Course Id", 404));
+
+	const newPlaylist = user.playlist.filter((item) => {
+		if (item.course.toString() !== course._id.toString()) return item;
+	});
+	user.playlist = newPlaylist;
+	await user.save();
+
+	res.status(200).json({
+		success: true,
+		message: "Playlist Removed Succesfully",
 	});
 });
