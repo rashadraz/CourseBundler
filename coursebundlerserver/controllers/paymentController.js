@@ -69,3 +69,39 @@ export const getRazorPayKey = catchAsyncError(async (req, res, next) => {
 		key: process.env.RAZORPAY_API_KEY,
 	});
 });
+
+export const cancelSubscription = catchAsyncError(async (req, res, next) => {
+	const user = await User.findById(req.user._id);
+
+	const subscriptionId = user.subscription.id;
+
+	let refund = false;
+
+	await instance.subscriptions.cancel(subscriptionId);
+
+	const payment = await Payment.findOne({
+		razorpay_subscription_id: subscriptionId,
+	});
+
+	const gap = Date.now() - payment.createdAt;
+
+	const refundTime = process.env.REFUND_DAYS * 24 * 60 * 60 * 1000;
+
+	if (refundTime > gap) {
+		await instance.payments.refund(payment.razorpay_payment_id);
+		refund = true;
+	}
+
+	await payment.remove();
+	user.subscription.id = null;
+	user.subscription.status = null;
+
+	await user.save();
+
+	res.status(200).json({
+		success: true,
+		message: refund
+			? "Subscription cancelled , You will receive full refund within 7 days"
+			: "Subscription cancelled , No refund initiated as subscription cancelled after 7 days",
+	});
+});
