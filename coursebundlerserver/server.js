@@ -6,7 +6,11 @@ import Razorpay from "razorpay";
 import nodeCron from "node-cron";
 import { Stats } from "./models/Stats.js";
 
-connectdb();
+try {
+	connectdb();
+} catch (error) {
+	console.error(error);
+}
 
 cloudinary.v2.config({
 	cloud_name: process.env.CLOUDINARY_CLIENT_NAME,
@@ -19,20 +23,28 @@ export const instance = new Razorpay({
 	key_secret: process.env.RAZORPAY_API_SECRET,
 });
 
-nodeCron.schedule("0 0 0 1 * *", async () => {
-	try {
-		await Stats.create();
-	} catch (error) {
-		console.log(error);
-	}
-});
+try {
+	nodeCron.schedule("0 0 0 1 * *", async () => {
+		try {
+			await Stats.create();
+		} catch (error) {
+			console.log(error);
+		}
+	});
 
-const temp = async () => {
-	await Stats.create({});
-};
+	const temp = async () => {
+		await Stats.create({});
+	};
 
-temp();
+	temp();
+} catch (error) {
+	console.error(error);
+}
 
-app.listen(process.env.PORT, () => {
-	console.log("server listening on port" + process.env.PORT);
-});
+try {
+	app.listen(process.env.PORT, () => {
+		console.log("server listening on port" + process.env.PORT);
+	});
+} catch (error) {
+	console.log(error);
+}
