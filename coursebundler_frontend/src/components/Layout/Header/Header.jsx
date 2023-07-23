@@ -14,13 +14,8 @@ import {
 import { RiDashboardFill, RiLogoutBoxFill, RiMenu5Fill } from 'react-icons/ri';
 import { Link } from 'react-router-dom';
 
-function Header() {
+function Header({ isAuthenticated = false, user }) {
   const { isOpen, onClose, onOpen } = useDisclosure();
-
-  const isAuthenticated = false;
-  const user = {
-    role: 'admin',
-  };
 
   const LinkButton = ({ url = '/', title = 'Home', onClose }) => (
     <Link to={url}>
