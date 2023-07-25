@@ -23,23 +23,24 @@ import { RiDeleteBin7Fill } from 'react-icons/ri';
 import { Link } from 'react-router-dom';
 import { fileUploadCss } from '../Auth/Register';
 
-const Profile = () => {
-  const user = {
-    name: 'rashad',
-    email: 'rashad@gmail.com',
-    createAt: String(new Date().toISOString()),
-    role: 'user',
-    subscription: {
-      status: 'active',
-    },
-    playlist: [
-      {
-        course: 'adsdad',
-        poster:
-          'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8Y291cnNlfGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60',
-      },
-    ],
-  };
+const Profile = ({ user }) => {
+  console.log(user)
+  // const user = {
+  //   name: 'rashad',
+  //   email: 'rashad@gmail.com',
+  //   createAt: String(new Date().toISOString()),
+  //   role: 'user',
+  //   subscription: {
+  //     status: 'active',
+  //   },
+  //   playlist: [
+  //     {
+  //       course: 'adsdad',
+  //       poster:
+  //         'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8Y291cnNlfGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60',
+  //     },
+  //   ],
+  // };
 
   const removeFromPlaylistHandler = id => {
     console.log(id);
@@ -63,7 +64,7 @@ const Profile = () => {
         padding={8}
       >
         <VStack>
-          <Avatar boxSize={'48'} />
+          <Avatar boxSize={'48'} src={user?.avatar?.url}/>
           <Button
             colorScheme="yellow"
             variant={'ghost'}
@@ -83,12 +84,12 @@ const Profile = () => {
           </HStack>
           <HStack>
             <Text children="CreatedAt" fontWeight={'bold'} />
-            <Text children={user.createAt.split('T')[0]} />
+            <Text children={user.createdAt.split('T')[0]} />
           </HStack>
           {user.role !== 'admin' && (
             <HStack>
               <Text children="Subscription" fontWeight={'bold'} />
-              {user.subscription.status === 'active' ? (
+              {user?.subscription?.status === 'active' ? (
                 <Button color={'yellow.500'} variant={'unstyled'}>
                   Cancel Subscription
                 </Button>
