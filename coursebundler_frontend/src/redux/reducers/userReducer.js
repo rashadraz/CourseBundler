@@ -55,7 +55,6 @@ export const userReducer = createReducer(
       state.error = action.payload;
     },
 
-
     registerRequest: state => {
       state.loading = true;
     },
@@ -68,6 +67,54 @@ export const userReducer = createReducer(
     registerFail: (state, action) => {
       state.loading = false;
       state.isAuthenticated = false;
+      state.error = action.payload;
+    },
+  }
+);
+
+export const profileReducer = createReducer(
+  {},
+  {
+    updateProfileRequest: state => {
+      state.loading = true;
+    },
+    updateProfileSuccess: (state, action) => {
+      state.loading = false;
+      state.message = action.payload;
+    },
+    updateProfileFail: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+
+    clearError: (state, action) => {
+      state.error = null;
+    },
+    clearMessage: (state, action) => {
+      state.message = null;
+    },
+
+    changePasswordRequest: state => {
+      state.loading = true;
+    },
+    changePasswordSuccess: (state, action) => {
+      state.loading = false;
+      state.message = action.payload;
+    },
+    changePasswordFail: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+
+    updateProfilePictureRequest: state => {
+      state.loading = true;
+    },
+    updateProfilePictureSuccess: (state, action) => {
+      state.loading = false;
+      state.message = action.payload;
+    },
+    updateProfilePictureFail: (state, action) => {
+      state.loading = false;
       state.error = action.payload;
     },
   }

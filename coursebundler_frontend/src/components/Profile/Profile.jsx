@@ -18,38 +18,40 @@ import {
   VStack,
   useDisclosure,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RiDeleteBin7Fill } from 'react-icons/ri';
 import { Link } from 'react-router-dom';
 import { fileUploadCss } from '../Auth/Register';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateProfilePicture } from '../../redux/actions/profile';
+import { toast } from 'react-hot-toast';
+import { loadUser } from '../../redux/actions/user';
 
 const Profile = ({ user }) => {
-  console.log(user)
-  // const user = {
-  //   name: 'rashad',
-  //   email: 'rashad@gmail.com',
-  //   createAt: String(new Date().toISOString()),
-  //   role: 'user',
-  //   subscription: {
-  //     status: 'active',
-  //   },
-  //   playlist: [
-  //     {
-  //       course: 'adsdad',
-  //       poster:
-  //         'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8Y291cnNlfGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60',
-  //     },
-  //   ],
-  // };
-
+  const dispatch = useDispatch();
+  const { loading, message, error } = useSelector(state => state.profile);
   const removeFromPlaylistHandler = id => {
     console.log(id);
   };
 
-  const changeImageSubmitHandler = (e, image) => {
-    console.log('iamgehandler');
+  const changeImageSubmitHandler = async (e, image) => {
     e.preventDefault();
+    const myForm = new FormData();
+    myForm.append('file', image);
+    await dispatch(updateProfilePicture(myForm));
+    dispatch(loadUser());
   };
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch({ type: 'clearError' });
+    }
+    if (message) {
+      toast.success(message);
+      dispatch({ type: 'clearMessage' });
+    }
+  }, [dispatch, error, message]);
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -64,7 +66,7 @@ const Profile = ({ user }) => {
         padding={8}
       >
         <VStack>
-          <Avatar boxSize={'48'} src={user?.avatar?.url}/>
+          <Avatar boxSize={'48'} src={user?.avatar?.url} />
           <Button
             colorScheme="yellow"
             variant={'ghost'}
@@ -147,6 +149,7 @@ const Profile = ({ user }) => {
       <ChangePhotoBox
         isOpen={isOpen}
         onClose={onClose}
+        loading={loading}
         changeImageSubmitHandler={changeImageSubmitHandler}
       />
     </Container>
@@ -155,7 +158,12 @@ const Profile = ({ user }) => {
 
 export default Profile;
 
-function ChangePhotoBox({ isOpen, onClose, changeImageSubmitHandler }) {
+function ChangePhotoBox({
+  isOpen,
+  onClose,
+  changeImageSubmitHandler,
+  loading,
+}) {
   const [imagePrev, setImagePrev] = useState('');
   const [image, setImage] = useState('');
   const changeImage = e => {
@@ -189,7 +197,12 @@ function ChangePhotoBox({ isOpen, onClose, changeImageSubmitHandler }) {
                   css={{ '&::file-selector-button': fileUploadCss }}
                   onChange={changeImage}
                 />
-                <Button w={'full'} colorScheme="yellow" type="submit">
+                <Button
+                  isLoading={loading}
+                  w={'full'}
+                  colorScheme="yellow"
+                  type="submit"
+                >
                   Change
                 </Button>
               </VStack>
