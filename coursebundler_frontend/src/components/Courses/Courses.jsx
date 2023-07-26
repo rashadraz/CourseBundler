@@ -9,8 +9,11 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { getAllCourses } from '../../redux/actions/course';
+import { toast } from 'react-hot-toast';
 
 const Course = ({
   views,
@@ -78,6 +81,7 @@ const Course = ({
 const Courses = () => {
   const [keyword, setKeyword] = useState('');
   const [category, setCategory] = useState();
+  const dispatch = useDispatch();
 
   const categories = [
     'Web-development',
@@ -88,9 +92,26 @@ const Courses = () => {
     'Game Development',
   ];
 
-  const addToPlaylistHandler = () => {
+  const addToPlaylistHandler = courseId => {
     console.log('Added to playlist');
   };
+  const { loading, courses, error, message } = useSelector(
+    state => state.course
+  );
+  useEffect(() => {
+    dispatch(getAllCourses(category, keyword));
+
+    if (error) {
+      toast.error(error);
+      dispatch({ type: 'clearError' });
+    }
+
+    if (message) {
+      toast.success(message);
+      dispatch({ type: 'clearMessage' });
+    }
+  }, [dispatch, category, keyword, error, message]);
+
   return (
     <Container minH={'95vh'} maxW="container.lg" paddingY={'8'}>
       <Heading children="All Courses" m={'8'} />
@@ -123,18 +144,21 @@ const Courses = () => {
         justifyContent={['flex-start', 'space-evenly']}
         alignItems={['center', 'flex-start']}
       >
-        <Course
-          title={'Sample title'}
-          description={'test'}
-          views={23}
-          imageSrc={
-            'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8Y291cnNlfGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60'
-          }
-          id={'sample'}
-          creator={'test'}
-          lectureCount={2}
-          addToPlaylistHandler={addToPlaylistHandler}
-        />
+        courses
+        {courses.length > 0 ? 
+          courses.map(item => (
+            <Course
+              key={item._id}
+              title={item.title}
+              description={item.description}
+              views={item.views}
+              imageSrc={item.poster.url}
+              id={item._id}
+              creator={item.createdBy}
+              lectureCount={item.numOfVideos}
+              addToPlaylistHandler={addToPlaylistHandler}
+            />
+          )): <Heading opacity={0.5} mt={4}>Courses Not Found</Heading>}
       </Stack>
     </Container>
   );
