@@ -156,13 +156,9 @@ export const removeFromPlaylist = id => async dispatch => {
   try {
     dispatch({ type: 'removeFromPlaylistRequest' });
 
-    const { data } = await axios.post(
+    const { data } = await axios.delete(
       `${server}/removefromplaylist?id=${id}`,
-
       {
-        headers: {
-          'Content-type': 'application/json',
-        },
         withCredentials: true,
       }
     );

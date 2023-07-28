@@ -140,6 +140,7 @@ const Profile = ({ user }) => {
                   </Button>
                 </Link>
                 <Button
+                  isLoading={loading}
                   onClick={() => removeFromPlaylistHandler(element.course)}
                 >
                   <RiDeleteBin7Fill />

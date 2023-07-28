@@ -87,13 +87,6 @@ export const profileReducer = createReducer(
       state.error = action.payload;
     },
 
-    clearError: (state, action) => {
-      state.error = null;
-    },
-    clearMessage: (state, action) => {
-      state.message = null;
-    },
-
     changePasswordRequest: state => {
       state.loading = true;
     },
@@ -118,7 +111,6 @@ export const profileReducer = createReducer(
       state.error = action.payload;
     },
 
-    
     forgetPasswordRequest: state => {
       state.loading = true;
     },
@@ -155,5 +147,11 @@ export const profileReducer = createReducer(
       state.error = action.payload;
     },
 
+    clearError: (state, action) => {
+      state.error = null;
+    },
+    clearMessage: (state, action) => {
+      state.message = null;
+    },
   }
 );
