@@ -14,6 +14,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { getAllCourses } from '../../redux/actions/course';
 import { toast } from 'react-hot-toast';
+import { addToPlaylist } from '../../redux/actions/profile';
+import { loadUser } from '../../redux/actions/user';
 
 const Course = ({
   views,
@@ -24,6 +26,7 @@ const Course = ({
   creator,
   description,
   lectureCount,
+  loading,
 }) => {
   return (
     <VStack className="course" alignItems={['center', 'flex-start']}>
@@ -67,6 +70,7 @@ const Course = ({
           <Button colorScheme="yellow">Watch Now</Button>
         </Link>
         <Button
+          isLoading={loading}
           variant={'ghost'}
           colorScheme="yellow"
           onClick={() => addToPlaylistHandler(id)}
@@ -92,8 +96,9 @@ const Courses = () => {
     'Game Development',
   ];
 
-  const addToPlaylistHandler = courseId => {
-    console.log('Added to playlist');
+  const addToPlaylistHandler =async courseId => {
+   await dispatch(addToPlaylist(courseId));
+   dispatch(loadUser())
   };
   const { loading, courses, error, message } = useSelector(
     state => state.course
@@ -102,6 +107,7 @@ const Courses = () => {
     dispatch(getAllCourses(category, keyword));
 
     if (error) {
+      console.log("Toast" + error)
       toast.error(error);
       dispatch({ type: 'clearError' });
     }
@@ -145,7 +151,7 @@ const Courses = () => {
         alignItems={['center', 'flex-start']}
       >
         courses
-        {courses.length > 0 ? 
+        {courses.length > 0 ? (
           courses.map(item => (
             <Course
               key={item._id}
@@ -157,8 +163,14 @@ const Courses = () => {
               creator={item.createdBy}
               lectureCount={item.numOfVideos}
               addToPlaylistHandler={addToPlaylistHandler}
+              loading={loading}
             />
-          )): <Heading opacity={0.5} mt={4}>Courses Not Found</Heading>}
+          ))
+        ) : (
+          <Heading opacity={0.5} mt={4}>
+            Courses Not Found
+          </Heading>
+        )}
       </Stack>
     </Container>
   );

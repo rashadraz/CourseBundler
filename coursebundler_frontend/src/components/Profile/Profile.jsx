@@ -23,15 +23,19 @@ import { RiDeleteBin7Fill } from 'react-icons/ri';
 import { Link } from 'react-router-dom';
 import { fileUploadCss } from '../Auth/Register';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateProfilePicture } from '../../redux/actions/profile';
+import {
+  removeFromPlaylist,
+  updateProfilePicture,
+} from '../../redux/actions/profile';
 import { toast } from 'react-hot-toast';
 import { loadUser } from '../../redux/actions/user';
 
 const Profile = ({ user }) => {
   const dispatch = useDispatch();
   const { loading, message, error } = useSelector(state => state.profile);
-  const removeFromPlaylistHandler = id => {
-    console.log(id);
+  const removeFromPlaylistHandler = async id => {
+    await dispatch(removeFromPlaylist(id));
+    dispatch(loadUser());
   };
 
   const changeImageSubmitHandler = async (e, image) => {
