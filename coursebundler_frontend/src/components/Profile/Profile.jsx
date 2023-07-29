@@ -28,11 +28,16 @@ import {
   updateProfilePicture,
 } from '../../redux/actions/profile';
 import { toast } from 'react-hot-toast';
-import { loadUser } from '../../redux/actions/user';
+import { cancelSubscription, loadUser } from '../../redux/actions/user';
 
 const Profile = ({ user }) => {
   const dispatch = useDispatch();
   const { loading, message, error } = useSelector(state => state.profile);
+  const {
+    loading: subscriptionLoading,
+    message: subscriptionMessage,
+    error: subscriptionError,
+  } = useSelector(state => state.subscription);
   const removeFromPlaylistHandler = async id => {
     await dispatch(removeFromPlaylist(id));
     dispatch(loadUser());
@@ -46,6 +51,10 @@ const Profile = ({ user }) => {
     dispatch(loadUser());
   };
 
+  const cancelSubscriptionHandler = async () => {
+    await dispatch(cancelSubscription());
+  };
+
   useEffect(() => {
     if (error) {
       toast.error(error);
@@ -55,7 +64,16 @@ const Profile = ({ user }) => {
       toast.success(message);
       dispatch({ type: 'clearMessage' });
     }
-  }, [dispatch, error, message]);
+    if (subscriptionError) {
+      toast.error(subscriptionError);
+      dispatch({ type: 'clearError' });
+    }
+    if (subscriptionMessage) {
+      toast.success(subscriptionMessage);
+      dispatch({ type: 'clearMessage' });
+      dispatch(loadUser());
+    }
+  }, [dispatch, error, message, subscriptionError, subscriptionMessage]);
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -96,7 +114,12 @@ const Profile = ({ user }) => {
             <HStack>
               <Text children="Subscription" fontWeight={'bold'} />
               {user?.subscription?.status === 'active' ? (
-                <Button color={'yellow.500'} variant={'unstyled'}>
+                <Button
+                  isLoading={subscriptionLoading}
+                  onClick={cancelSubscriptionHandler}
+                  color={'yellow.500'}
+                  variant={'unstyled'}
+                >
                   Cancel Subscription
                 </Button>
               ) : (
