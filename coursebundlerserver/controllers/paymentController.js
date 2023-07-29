@@ -70,15 +70,73 @@ export const getRazorPayKey = catchAsyncError(async (req, res, next) => {
 	});
 });
 
+// export const cancelSubscription = catchAsyncError(async (req, res, next) => {
+// 	try {
+// 		const user = await User.findById(req.user._id);
+
+// 		const subscriptionId = user.subscription.id;
+
+// 		let refund = false;
+
+// 		await instance.subscriptions.cancel(subscriptionId);
+
+// 		const payment = await Payment.findOne({
+// 			razorpay_subscription_id: subscriptionId,
+// 		});
+
+// 		const gap = Date.now() - payment.createdAt;
+
+// 		const refundTime = process.env.REFUND_DAYS * 24 * 60 * 60 * 1000;
+
+// 		if (refundTime > gap) {
+// 			await instance.payments.refund(payment.razorpay_payment_id);
+// 			refund = true;
+// 		}
+
+// 		await payment.remove();
+// 		user.subscription.id = undefined;
+// 		user.subscription.status = undefined;
+
+// 		await user.save();
+
+// 		res.status(200).json({
+// 			success: true,
+// 			message: refund
+// 				? "Subscription cancelled , You will receive full refund within 7 days"
+// 				: "Subscription cancelled , No refund initiated as subscription cancelled after 7 days",
+// 		});
+// 	} catch (error) {
+// 		console.log(error);
+// 	}
+// });
+
+
 export const cancelSubscription = catchAsyncError(async (req, res, next) => {
 	try {
 		const user = await User.findById(req.user._id);
 
 		const subscriptionId = user.subscription.id;
+		const subscriptionStatus = user.subscription.status;
 
-		let refund = false;
+		// Check if the subscription is already cancelled
+		if (subscriptionStatus === "cancelled") {
+			return res.status(400).json({
+				success: false,
+				message: "Subscription is already cancelled.",
+			});
+		}
 
-		await instance.subscriptions.cancel(subscriptionId);
+		// Attempt to cancel the subscription
+		try {
+			await instance.subscriptions.cancel(subscriptionId);
+		} catch (error) {
+			// Handle cancellation error
+			return res.status(400).json({
+				success: false,
+				error: error.message,
+				message: "Failed to cancel the subscription.",
+			});
+		}
 
 		const payment = await Payment.findOne({
 			razorpay_subscription_id: subscriptionId,
@@ -88,24 +146,36 @@ export const cancelSubscription = catchAsyncError(async (req, res, next) => {
 
 		const refundTime = process.env.REFUND_DAYS * 24 * 60 * 60 * 1000;
 
+		let refund = false;
+
+		// Check if the refund is applicable
 		if (refundTime > gap) {
-			await instance.payments.refund(payment.razorpay_payment_id);
-			refund = true;
+			try {
+				await instance.payments.refund(payment.razorpay_payment_id);
+				refund = true;
+			} catch (error) {
+				// Handle refund error
+				console.log("Refund failed:", error);
+			}
 		}
 
 		await payment.remove();
 		user.subscription.id = undefined;
-		user.subscription.status = undefined;
+		user.subscription.status = "cancelled"; // Update the subscription status here
 
 		await user.save();
 
 		res.status(200).json({
 			success: true,
 			message: refund
-				? "Subscription cancelled , You will receive full refund within 7 days"
-				: "Subscription cancelled , No refund initiated as subscription cancelled after 7 days",
+				? "Subscription cancelled, You will receive a full refund within 7 days."
+				: "Subscription cancelled, No refund initiated as subscription cancelled after 7 days.",
 		});
 	} catch (error) {
 		console.log(error);
+		res.status(500).json({
+			success: false,
+			message: "Internal server error.",
+		});
 	}
 });
