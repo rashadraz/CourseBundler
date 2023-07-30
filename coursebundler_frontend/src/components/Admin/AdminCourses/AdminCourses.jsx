@@ -19,21 +19,13 @@ import cursor from '../../../assets/images/cursor.png';
 import Sidebar from '../Sidebar';
 import { RiDeleteBin7Fill } from 'react-icons/ri';
 import CourseModal from './CourseModal';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { getAllCourses } from '../../../redux/actions/course';
 
 const AdminCourses = () => {
-  const courses = [
-    {
-      _id: 'asdfdfsff',
-      title: 'React course',
-      category: 'Web Development',
-      poster: {
-        url: 'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8Y291cnNlfGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60',
-      },
-      createdBy: 'rashad',
-      views: 123,
-      numOfVideos: 12,
-    },
-  ];
+  const { courses } = useSelector(state => state.course);
+  const dispatch = useDispatch();
 
   const { isOpen, onClose, onOpen } = useDisclosure();
   const courseDetailsHandler = userId => {
@@ -53,6 +45,10 @@ const AdminCourses = () => {
   const addLectureHandler = (e, courseId, title, description, video) => {
     e.preventDefault();
   };
+
+  useEffect(() => {
+    dispatch(getAllCourses());
+  }, [dispatch]);
 
   return (
     <Grid
