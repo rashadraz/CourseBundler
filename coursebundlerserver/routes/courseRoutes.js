@@ -20,7 +20,7 @@ router.route("/courses").get(getAllCourses);
 
 //create new course only admin
 router
-	.route("/createcourses")
+	.route("/createcourse")
 	.post(isAuthenticated, authorizeAdmin, singleUpload, createCourse);
 
 //Add Lecture ,Delete Course , Get Course Details
