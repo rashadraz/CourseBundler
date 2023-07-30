@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { catchAsyncError } from "../middlewares/catchAsyncError.js";
 import { Course } from "../models/Course.js";
 import { Stats } from "../models/Stats.js";
