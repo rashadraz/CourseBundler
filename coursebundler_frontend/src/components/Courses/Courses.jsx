@@ -96,9 +96,9 @@ const Courses = () => {
     'Game Development',
   ];
 
-  const addToPlaylistHandler =async courseId => {
-   await dispatch(addToPlaylist(courseId));
-   dispatch(loadUser())
+  const addToPlaylistHandler = async courseId => {
+    await dispatch(addToPlaylist(courseId));
+    dispatch(loadUser());
   };
   const { loading, courses, error, message } = useSelector(
     state => state.course
@@ -107,7 +107,7 @@ const Courses = () => {
     dispatch(getAllCourses(category, keyword));
 
     if (error) {
-      console.log("Toast" + error)
+      console.log('Toast' + error);
       toast.error(error);
       dispatch({ type: 'clearError' });
     }
