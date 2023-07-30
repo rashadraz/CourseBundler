@@ -70,7 +70,8 @@ export const getCourseLectures = catchAsyncError(async (req, res, next) => {
 export const addLecture = catchAsyncError(async (req, res, next) => {
 	const { id } = req.params;
 	const { title, description } = req.body;
-	const course = await Course.findById(id);
+	const courseId = mongoose.Types.ObjectId(id);
+	const course = await Course.findById(courseId);
 	if (!course) return next(new ErrorHandler("Course not found", 404));
 
 	//max video size 100mb
