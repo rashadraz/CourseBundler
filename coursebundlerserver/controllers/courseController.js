@@ -15,10 +15,10 @@ export const getAllCourses = catchAsyncError(async (req, res, next) => {
 			$regex: keyword,
 			$options: "i",
 		},
-		category:{
+		category: {
 			$regex: category,
 			$options: "i",
-		}
+		},
 	}).select("-lectures");
 	res.status(200).json({
 		success: true,
@@ -55,55 +55,63 @@ export const createCourse = catchAsyncError(async (req, res, next) => {
 });
 
 export const getCourseLectures = catchAsyncError(async (req, res, next) => {
-	const course = await Course.findById(req.params.id);
+	try {
+		const course = await Course.findById(req.params.id);
 
-	course.views += 1;
+		course.views += 1;
 
-	await course.save();
+		await course.save();
 
-	if (!course) return next(new ErrorHandler("Course not found", 404));
-	res.status(200).json({
-		success: true,
-		lectures: course.lectures,
-	});
+		if (!course) return next(new ErrorHandler("Course not found", 404));
+		res.status(200).json({
+			success: true,
+			lectures: course.lectures,
+		});
+	} catch (error) {
+		console.log(error);
+	}
 });
 
 export const addLecture = catchAsyncError(async (req, res, next) => {
-	const { id } = req.params;
-	const { title, description } = req.body;
-	const courseId = mongoose.Types.ObjectId(id);
-	const course = await Course.findById(courseId);
-	if (!course) return next(new ErrorHandler("Course not found", 404));
+	try {
+		const { id } = req.params;
+		const { title, description } = req.body;
 
-	//max video size 100mb
-	const file = req.file;
+		const course = await Course.findById(id);
+		if (!course) return next(new ErrorHandler("Course not found", 404));
 
-	const fileUri = getDataUri(file);
+		//max video size 100mb
+		const file = req.file;
 
-	const mycloud = await cloudinary.v2.uploader.upload(fileUri.content, {
-		resource_type: "video",
-	});
+		const fileUri = getDataUri(file);
 
-	//upload file here
+		const mycloud = await cloudinary.v2.uploader.upload(fileUri.content, {
+			resource_type: "video",
+		});
 
-	course.lectures.push({
-		title,
-		description,
-		video: {
-			public_id: mycloud.public_id,
-			url: mycloud.secure_url,
-		},
-	});
+		//upload file here
 
-	course.numOfVideos = course.lectures.length;
+		course.lectures.push({
+			title,
+			description,
+			video: {
+				public_id: mycloud.public_id,
+				url: mycloud.secure_url,
+			},
+		});
 
-	await course.save();
+		course.numOfVideos = course.lectures.length;
 
-	if (!course) return next(new ErrorHandler("Course not found", 404));
-	res.status(200).json({
-		success: true,
-		message: "Lectures Added in Course Successfully",
-	});
+		await course.save();
+
+		if (!course) return next(new ErrorHandler("Course not found", 404));
+		res.status(200).json({
+			success: true,
+			message: "Lectures Added in Course Successfully",
+		});
+	} catch (error) {
+		console.log(error);
+	}
 });
 
 export const deleteCourse = catchAsyncError(async (req, res, next) => {
