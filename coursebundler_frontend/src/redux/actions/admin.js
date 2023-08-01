@@ -134,15 +134,30 @@ export const deleteUser = id => async dispatch => {
     };
     dispatch({ type: 'deleteAllUserRequest' });
 
-    const { data } = await axios.delete(
-      `${server}/admin/user/${id}`,
-      config
-    );
+    const { data } = await axios.delete(`${server}/admin/user/${id}`, config);
 
     dispatch({ type: 'deleteAllUserSuccess', payload: data.message });
   } catch (error) {
     dispatch({
       type: 'deleteAllUserFail',
+      payload: error.response.data.message,
+    });
+  }
+};
+
+export const getDashboardStats = () => async dispatch => {
+  try {
+    const config = {
+      withCredentials: true,
+    };
+    dispatch({ type: 'getAdminStatsRequest' });
+
+    const { data } = await axios.get(`${server}/admin/stats`, config);
+
+    dispatch({ type: 'getAdminStatsSuccess', payload: data });
+  } catch (error) {
+    dispatch({
+      type: 'getAdminStatsFail',
       payload: error.response.data.message,
     });
   }

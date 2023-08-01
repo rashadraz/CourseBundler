@@ -1,17 +1,53 @@
-import { Box, Button, Container, FormLabel, Heading, Input, Textarea, VStack } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import {
+  Box,
+  Button,
+  Container,
+  FormLabel,
+  Heading,
+  Input,
+  Textarea,
+  VStack,
+} from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { contactUs } from '../../redux/actions/other';
+import { toast } from 'react-hot-toast';
 
 function Contact() {
-    const [email, setEmail] = useState('');
-    const [message, setMessage] = useState('');
-    const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [name, setName] = useState('');
+
+  const dispatch = useDispatch();
+  const {
+    loading,
+    error,
+    message: stateMessage,
+  } = useSelector(state => state.other);
+
+  const submitHandler = e => {
+    e.preventDefault();
+    dispatch(contactUs(name, email, message));
+  };
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch({ type: 'clearError' });
+    }
+
+    if (stateMessage) {
+      toast.success(stateMessage);
+      dispatch({ type: 'clearMessage' });
+    }
+  }, [dispatch, stateMessage, error]);
+
   return (
     <Container h={'92vh'}>
       <VStack h={'full'} justifyContent={'center'} spacing={16}>
         <Heading children="Contact Us" />
-        <form style={{ width: '100%' }}>
-         
+        <form style={{ width: '100%' }} onSubmit={submitHandler}>
           <Box my={4}>
             <FormLabel htmlFor="name" children="Name" />
             <Input
@@ -49,22 +85,24 @@ function Contact() {
               focusBorderColor="yellow.500"
             />
           </Box>
-  
 
-       
-          <Button my={'4'} colorScheme="yellow" type="submit">
+          <Button
+            isLoading={loading}
+            my={'4'}
+            colorScheme="yellow"
+            type="submit"
+          >
             Send Mail
           </Button>
           <Box my={'4'}>
             Request for a course?{' '}
             <Link to="/request">
               <Button colorScheme="blue" variant={'link'}>
-               Click{' '}
+                Click{' '}
               </Button>{' '}
               Here
             </Link>
           </Box>
-        
         </form>
       </VStack>
     </Container>
